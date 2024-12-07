@@ -1,0 +1,35 @@
+{% extends 'quiz/base.html' %}
+{% block content %}
+<h2>Python Quiz</h2>
+<form method="POST" action="{% url 'quiz_submit' %}">
+    {% csrf_token %}
+    {% for question in questions %}
+        <div class="mb-4">
+            <p><strong>{{ forloop.counter }}. {{ question.question_text }}</strong></p>
+            <div>
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_1 }}" required>
+                    {{ question.option_1 }}
+                </label><br>
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_2 }}">
+                    {{ question.option_2 }}
+                </label><br>
+                {% if question.option_3 %}
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_3 }}">
+                    {{ question.option_3 }}
+                </label><br>
+                {% endif %}
+                {% if question.option_4 %}
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_4 }}">
+                    {{ question.option_4 }}
+                </label><br>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit Quiz</button>
+</form>
+{% endblock %}
