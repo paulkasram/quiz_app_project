@@ -1,8 +1,11 @@
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView
+from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm
 from .models import Question, QuizResult
 import random
 
@@ -12,50 +15,54 @@ def index(request):
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            messages.success(request, "Signup successful! You can log in now.")
             login(request, user)
-            return redirect('quiz_home')  # Redirect to quiz home page
+            return redirect('index')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
+
     return render(request, 'quiz/signup.html', {'form': form})
 
 
-@login_required
-def start_quiz(request):
-    # Select 5 random questions
-    questions = list(Question.objects.all())
-    random_questions = random.sample(questions, 5)
-    
-    # Store question IDs in the session for later use
-    request.session['quiz_questions'] = [q.id for q in random_questions]
-    request.session['score'] = 0  # Initialize score
-    
-    return render(request, 'quiz/quiz_start.html', {'questions': random_questions})
+class CustomLoginView(LoginView):
+    def get_success_url(self):
+        return super().get_success_url()
+
+
+
+def custom_logout(request):
+    logout(request)
+    return redirect('login')
 
 
 @login_required
-def submit_quiz(request):
+def quiz_start(request):
+    # Get 5 random questions
+    questions = random.sample(list(Question.objects.all()), 5)
+
+    # Store questions in session
+    request.session['quiz_questions'] = [q.id for q in questions]
+
+    return render(request, 'quiz/quiz_start.html', {'questions': questions})
+
+
+@login_required
+def quiz_submit(request):
     if request.method == 'POST':
-        # Retrieve selected answers and stored question IDs
         question_ids = request.session.get('quiz_questions', [])
         score = 0
-
         for question_id in question_ids:
             question = Question.objects.get(id=question_id)
             user_answer = request.POST.get(f'question_{question.id}')
-
-            # Check if the user's answer matches the correct option
+            print(f"Answer for {question.question_text}: {user_answer}")
             if user_answer == question.correct_option:
                 score += 1
 
-        # Save the result to the database
-        QuizResult.objects.create(user=request.user, score=score)
-
-        # Store the final score in session
+        result = QuizResult.objects.create(user=request.user, score=score)
         request.session['score'] = score
-
         return redirect('quiz_result')
 
     return HttpResponse("Invalid Request", status=400)
@@ -66,7 +73,7 @@ def quiz_result(request):
     score = request.session.get('score', 0)
     percentage = (score / 5) * 100
 
-    # Determine message based on score
+    # Message based on score
     if score <= 2:
         message = "Please try again!"
     elif score == 3:
@@ -86,7 +93,6 @@ def quiz_result(request):
 
 @login_required
 def quiz_history(request):
-    # Fetch all quiz results for the logged-in user
     results = QuizResult.objects.filter(user=request.user)
     average_score = results.aggregate(avg_score=models.Avg('score'))['avg_score'] or 0
     highest_score = results.aggregate(max_score=models.Max('score'))['max_score'] or 0
@@ -100,3 +106,12 @@ def quiz_history(request):
     }
     return render(request, 'quiz/quiz_history.html', context)
 
+
+@login_required
+def test_session(request):
+    # Increment a session counter
+    if 'counter' not in request.session:
+        request.session['counter'] = 1
+    else:
+        request.session['counter'] += 1
+    return HttpResponse(f"Session counter: {request.session['counter']}")

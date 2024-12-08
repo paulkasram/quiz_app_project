@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'quiz',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,11 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # This stores sessions in the database
+SESSION_COOKIE_AGE = 3600  # Set session timeout duration (in seconds)
+
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
