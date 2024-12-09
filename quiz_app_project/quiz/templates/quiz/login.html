@@ -5,7 +5,6 @@
 {% block content %}
     <h2>Login</h2>
 
-    <!-- Show logout success message only if logout=success in the URL -->
     {% if request.GET.logout == 'success' %}
         <div class="alert alert-success" role="alert">
             You have successfully logged out.

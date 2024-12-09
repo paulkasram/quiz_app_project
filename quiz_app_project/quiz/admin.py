@@ -13,7 +13,7 @@ class QuizResultAdmin(admin.ModelAdmin):
 admin.site.register(QuizResult, QuizResultAdmin)
 
 
-class QuizResultInline(admin.TabularInline):  # Inline view for quiz results
+class QuizResultInline(admin.TabularInline):
     model = QuizResult
     extra = 0
 

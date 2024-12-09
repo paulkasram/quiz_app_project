@@ -17,5 +17,12 @@ class QuizResult(models.Model):
     score = models.IntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['timestamp']),
+        ]
+        
     def __str__(self):
         return f"{self.user.username} - {self.score} points"
+    
+
