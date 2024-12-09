@@ -5,8 +5,8 @@ class Question(models.Model):
     question_text = models.CharField(max_length=255)
     option_1 = models.CharField(max_length=100)
     option_2 = models.CharField(max_length=100)
-    option_3 = models.CharField(max_length=100, null=True)
-    option_4 = models.CharField(max_length=100, null=True)
+    option_3 = models.CharField(max_length=100, blank=True, null=True)
+    option_4 = models.CharField(max_length=100, blank=True, null=True)
     correct_option = models.CharField(max_length=100)
 
     def __str__(self):
@@ -21,8 +21,7 @@ class QuizResult(models.Model):
         indexes = [
             models.Index(fields=['timestamp']),
         ]
-        
+
     def __str__(self):
         return f"{self.user.username} - {self.score} points"
-    
-
+   

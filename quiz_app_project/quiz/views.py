@@ -1,13 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView
 from django.db import models
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, QuestionForm
 from .models import Question, QuizResult
 import random
+
+def is_admin_or_staff(user):
+    return user.is_staff or user.is_superuser
 
 def index(request):
     return render(request, 'quiz/index.html')
@@ -131,6 +134,33 @@ def quiz_history(request):
     return render(request, 'quiz/quiz_history.html', context)
 
 
+@login_required
+@user_passes_test(is_admin_or_staff, login_url='access-denied')
+def add_question(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Question added successfully!")
+            return redirect('add_question')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = QuestionForm()
+
+    return render(request, 'quiz/add_question.html', {'form': form})
+
+@login_required
+@user_passes_test(is_admin_or_staff, login_url='access-denied')
+def question_list(request):
+    questions = Question.objects.all()
+    return render(request, 'quiz/question_list.html', {'questions': questions})
+
+def access_denied(request):
+    return render(request, 'quiz/access_denied.html', status=403)
+
+
+# Only added for testing
 @login_required
 def test_session(request):
     if 'counter' not in request.session:

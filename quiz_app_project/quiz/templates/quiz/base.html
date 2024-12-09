@@ -21,6 +21,14 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'quiz_history' %}">{{ user.username }}</a>
                         </li>
+                        {% if user.is_staff or user.is_superuser %}
+                        <li> 
+                            <a class="nav-link" href="{% url 'add_question' %}">Add Question</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{% url 'question_list' %}">Question List</a>
+                        </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}" 
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

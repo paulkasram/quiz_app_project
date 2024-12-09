@@ -10,6 +10,8 @@ urlpatterns = [
     path('submit/', views.quiz_submit, name='quiz_submit'),
     path('result/', views.quiz_result, name='quiz_result'),
     path('history/', views.quiz_history, name='quiz_history'),
-
+    path('add-question/', views.add_question, name='add_question'),
+    path('question-list/', views.question_list, name='question_list'),
+    path('access_denied/', views.access_denied, name='access_denied'),
     path('test-session/', views.test_session, name='test_session'),
 ]
