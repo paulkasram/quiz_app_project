@@ -110,3 +110,8 @@ This project is open-source and available under the [MIT License](LICENSE).
 - Django framework (https://www.djangoproject.com/)
 - Bootstrap (https://getbootstrap.com/)
 - Phonenumber-field (https://github.com/stefanfoulis/django-phonenumber-field)
+
+## Author:
+Paul Jordan Untalan
+c0899319
+CPCT Lambton College in Toronto

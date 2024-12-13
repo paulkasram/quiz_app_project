@@ -130,7 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # This stores sessions in the database
-SESSION_COOKIE_AGE = 3600  # Set session timeout duration (in seconds)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 3600
 
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
